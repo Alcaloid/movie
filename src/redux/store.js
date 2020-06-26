@@ -6,7 +6,7 @@ import ManagerMovieReducer from './reducer';
 const persistConfig = {
   key: 'movie',
   storage: AsyncStorage,
-  whitelist: ['favMovie'],
+  whitelist: ['favMovie', 'searchMovie'],
 };
 
 const persistedReducer = persistReducer(persistConfig, ManagerMovieReducer);

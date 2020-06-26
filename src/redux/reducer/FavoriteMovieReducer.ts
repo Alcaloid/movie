@@ -1,6 +1,8 @@
 import {ManageFavorite} from '../../type/ActionType';
 
-function manageMovie(state = [], action) {
+const initialState = [];
+
+function manageMovie(state = initialState, action) {
   switch (action.type) {
     case ManageFavorite.ADD_FAVORITE:
       return [...state, action.movie];
@@ -16,7 +18,7 @@ function manageMovie(state = [], action) {
       return [...state];
     }
     default:
-      return [...state];
+      return state;
   }
 }
 

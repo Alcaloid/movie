@@ -4,17 +4,19 @@ import {ResultCard, LoadingIndicator} from '../component';
 import axios from 'axios';
 import ENDPOINT_MOVIE, {HeaderApi} from '../config/config';
 import {MovieInfo} from '../type/movieInfo';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {ResultScreenType} from '../type/ResultScreenType';
+import {saveSearchMovieName} from '../redux/action';
 
 const ResultScreen = ({route, navigation}) => {
   const {searchText} = route.params;
   const {role} = route.params;
-  const [movieResult, setMovieResult] = useState<MovieInfo>([]);
-  const [page, setPage] = useState(1);
-  const [maxPage, setMaxPage] = useState(-1);
-  const [isLoading, setIsLoading] = useState(false);
+  const [movieResult, setMovieResult] = useState<MovieInfo[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [maxPage, setMaxPage] = useState<number>(-1);
+  const [isLoading, setIsLoading] = useState<Boolean>(false);
   const favoriteMovie = useSelector((state) => state.favMovie);
+  const dispatch = useDispatch();
 
   const callMovieApi = (query: string, page: number) => {
     setIsLoading(true);
@@ -27,25 +29,34 @@ const ResultScreen = ({route, navigation}) => {
         },
       })
       .then((response) => {
-        setPage(page + 1);
-        if (maxPage == -1) {
-          //set one time
-          setMaxPage(response.data.total_pages);
+        if (response.status == 200 && response.data.results.length > 0) {
+          setPage(page + 1);
+          if (maxPage == -1) {
+            //set one time
+            setMaxPage(response.data.total_pages);
+          }
+          const movie = [...movieResult, ...response.data.results];
+          setMovieResult(movie);
+          dispatch(saveSearchMovieName(searchText));
         }
-        const movie = [...movieResult, ...response.data.results];
-        setMovieResult(movie);
+
         setIsLoading(false);
       });
   };
+
+  useEffect(() => {
+    console.log('data:', favoriteMovie);
+  }, [favoriteMovie]);
 
   useEffect(() => {
     // when come to this page try to fetch movie
     if (role == ResultScreenType.SEARCH_MOVIE) {
       callMovieApi(searchText, page);
     } else {
+      dispatch(saveSearchMovieName(searchText));
       setMovieResult(favoriteMovie);
     }
-  }, [searchText, role, setMovieResult, favoriteMovie]);
+  }, [searchText, role, setMovieResult, favoriteMovie, dispatch]);
 
   const checkFavoriteMovie = (detail: MovieInfo) => {
     const checker = favoriteMovie.findIndex(

@@ -8,7 +8,3 @@ export function addFavorite(movie: MovieInfo) {
 export function removeFavorite(movie: MovieInfo) {
   return {type: ManageFavorite.REMOVE_FAVORITE, movie};
 }
-
-export function loadFavorite(movie: MovieInfo) {
-  return {type: ManageFavorite.LOAD_FAVORITE, movie};
-}
