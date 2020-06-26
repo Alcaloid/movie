@@ -1,0 +1,4 @@
+export enum ResultScreenType {
+  SEARCH_MOVIE = 'SEARCH_MOVIE',
+  FAVORITE_MOVIE = 'FAVORITE_MOVIE'
+}
